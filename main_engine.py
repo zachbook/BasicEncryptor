@@ -1,7 +1,7 @@
-from rsa_encryptor import RSA_encrypter
+from rsa_encryptor import RSA_encryptor
 import os
 import sys
-
+import socket
 from enum import Enum
 
 class State(Enum):
@@ -27,18 +27,49 @@ class file_sender:
 state = State.RECIEVER
 
 def start_program():
+    HOST = "127.0.0.1"
+    PORT = 65432
     if(state==State.RECIEVER):
+
         #instantiate sender object and generate phi and N
         sender = file_sender()
-        N = sender._generate_n
-        phi = sender._generate_phi
-        decrypt = RSA_encrypter()
-        decrypt.decrypt(107,187,"test.txt")
-
+        N = sender._generate_n()
+        phi = sender._generate_phi()
+        
+        #create a connection state and recieve the file
+        file = "output.txt"
+        decrypt = RSA_encryptor()
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            
+            
+            s.bind((HOST,PORT))
+            s.listen()
+            conn,addr = s.accept()
+            with conn, open(file, "rb") as f:
+                while True:
+                    data = conn.recv(1024)
+                    f.write(data)
+                    if not data:
+                        break
+        
+        decrypt.decrypt(107,187,file)
     elif(state==State.SENDER):
-        pass
-         
-
+        encrypted = RSA_encryptor()
+        output_file= encrypted.encrypt(187,3,"sample.txt")
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((HOST,PORT))
+            with open(output_file, "rb") as f:
+                byte = f.read()
+                s.sendall( byte)
+            
+if __name__ =="__main__":
+    app = file_sender()
+    if(sys.argv[1] == "send"):
+        state = State.SENDER
+        start_program()
+    elif (sys.argv[1] =="recieve"):
+        state = State.RECIEVER
+        start_program()
 
 
 
