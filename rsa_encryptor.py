@@ -19,13 +19,12 @@ class RSA_encryptor():
     
     def decrypt(self,d,N,file):
         #the decrypted file to be outputed
-        output_file = "output.txt";
-
-        with open(file,"rb") as file:
+        output_file = "output_file.txt";
+        with open(file,"rb") as file,  open(output_file, "wb") as output_file:
             data = file.read()
             for byte in data:
                 deciphered_byte =pow(byte,d,N)        
-                output_file.write(int.to_bytes(deciphered_byte, 4, 'big'))
+                output_file.write(int.to_bytes(deciphered_byte, 1, 'big'))
         print("File successfully decrypted")
         
         return output_file
