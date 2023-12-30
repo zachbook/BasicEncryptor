@@ -10,18 +10,7 @@ class State(Enum):
 
 class file_sender:
     def __init__(self):
-        self.__p = int.from_bytes(os.urandom(1))
-        self.__q = int.from_bytes(os.urandom(1))
-    
-    
-    #choose two random prime numbers p and q multiply them to get n
-    def _generate_n(self):
-        _n = self.__p*self.__q
-        return _n
-    
-    #generate phi
-    def _generate_phi(self):
-        return ((self.__p-1)*(self.__q-1))
+       pass
 
     
 state = State.RECIEVER
@@ -39,9 +28,7 @@ def start_program(main_file = "output.txt"):
         #create a connection state and recieve the file
        
         decrypt = RSA_encryptor()
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            
-            
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:      
             s.bind((HOST,PORT))
             s.listen()
             conn,addr = s.accept()
@@ -63,10 +50,13 @@ def start_program(main_file = "output.txt"):
                 s.sendall( byte)
             
 if __name__ =="__main__":
-    app = file_sender()
     if(sys.argv[1] == "send" and len(sys.argv) >2):
         state = State.SENDER
-        start_program(sys.argv[2])
+        check_if_file = os.path.isfile(sys.argv[2])
+        if(check_if_file):           
+            start_program(sys.argv[2])
+        else:
+            print("Enter a proper file path.")
     elif (sys.argv[1] =="recieve"):
         state = State.RECIEVER
         start_program()
