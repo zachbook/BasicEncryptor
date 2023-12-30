@@ -2,12 +2,6 @@ import math
 import random
 import os
 class key_generator:
-
-
-
-
-    
-
     def __init__(self):
         self.__p = int.from_bytes(os.urandom(1))
         self.__q = int.from_bytes(os.urandom(1))
@@ -17,7 +11,7 @@ class key_generator:
     @param number: the number to be tested
     TODO: make it more efficient 
     '''
-    def prime_test(number):
+    def prime_test(self,number):
         #solve n-1 = 2^k *m
         n = number-1
         counter =1
@@ -40,7 +34,6 @@ class key_generator:
         if that doesn't yield 1 or -1  do
         b1 
         '''
-        
         bi = pow(a,m) % number
         if(bi == number-1 ):
             return True
@@ -51,28 +44,39 @@ class key_generator:
             while(second_counter < k):
                 bi = pow(bi,2) %number
                 second_counter+=1
-                if(bi==1 and bi-1 !=number-1 and bi-1 !=1):
+                if(bi==1):
                     return False
-                else:
+                elif bi == number - 1:
                     return True
-                    
-        
-        
-
+        return True
                 
+    #calculate and return __p * __q    
+    def find_n_phi(self):
+        result = []
+        __p = int.from_bytes(os.urandom(1))
+        __q = int.from_bytes(os.urandom(1))
+        while(not self.prime_test(__p)):
+             __p = int.from_bytes(os.urandom(1))
+        while(not self.prime_test(__q)):
+           __q = int.from_bytes(os.urandom(1))
+        result[0] = __p* __q
+        result[1] = (__p-1)*(__q-1)
+        return result
+
+    def calculate_d(self,e,phi):
+        return pow(e,-1,phi)
 
 
-        
+    #method for generating key
+    def generate_key(self):
+        result = []
+        n_phi_arr = self.find_n_phi()
+        n = n_phi_arr[0]
+        phi = n_phi_arr[1]
+        d = self.calculate_d(3,phi)
+        result[0] = n
+        result[1] = d
+        return result
 
-
-    
-
-    #choose two random prime numbers p and q multiply them to get n
-    def _generate_n(self):
-        _n = self.__p*self.__q
-        return _n
-    
-    #generate phi
-    def _generate_phi(self):
-        return ((self.__p-1)*(self.__q-1))
+   
     
