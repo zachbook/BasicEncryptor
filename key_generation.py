@@ -5,6 +5,7 @@ class key_generator:
     def __init__(self):
         self.__p = int.from_bytes(os.urandom(1))
         self.__q = int.from_bytes(os.urandom(1))
+
     
     '''
     This function tests whether a number is prime or not using Rabin-Miller primality test
@@ -59,8 +60,8 @@ class key_generator:
              __p = int.from_bytes(os.urandom(1))
         while(not self.prime_test(__q)):
            __q = int.from_bytes(os.urandom(1))
-        result[0] = __p* __q
-        result[1] = (__p-1)*(__q-1)
+        result.append(__p* __q)
+        result.append((__p-1)*(__q-1)) 
         return result
 
     def calculate_d(self,e,phi):
@@ -74,8 +75,8 @@ class key_generator:
         n = n_phi_arr[0]
         phi = n_phi_arr[1]
         d = self.calculate_d(3,phi)
-        result[0] = n
-        result[1] = d
+        result.append(n)
+        result.append(d)
         return result
 
    
